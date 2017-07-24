@@ -8,7 +8,7 @@
     "night-train": "^0.0.2",
     "toml": "^2.3.2"
   },
-  "name": "qgp9",
+  "name": "QGP9",
   "description": "Static Site Generator for Vue",
   "version": "0.0.0",
   "main": "src/QGP9.js",
