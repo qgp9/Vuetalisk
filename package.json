@@ -1,0 +1,35 @@
+{
+  "dependencies": {
+    "fs-extra": "^4.0.0",
+    "gray-matter": "^3.0.2",
+    "js-yaml": "^3.9.0",
+    "lodash": "^4.17.4",
+    "lokijs": "^1.5.0",
+    "night-train": "^0.0.2",
+    "toml": "^2.3.2"
+  },
+  "name": "qgp9",
+  "description": "Static Site Generator for Vue",
+  "version": "0.0.0",
+  "main": "src/QGP9.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qgp9/qgp9.git"
+  },
+  "keywords": [
+    "vue",
+    "Static",
+    "Site",
+    "Generator"
+  ],
+  "author": "qgp9 <pauljang9@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qgp9/qgp9/issues"
+  },
+  "homepage": "https://github.com/qgp9/qgp9#readme"
+}
