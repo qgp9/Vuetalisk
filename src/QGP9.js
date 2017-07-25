@@ -2,7 +2,7 @@ const nodepath = require('path')
 // const fs = require('fs-extra')
 const Train = require('night-train')
 const {ERROR, DEBUG} = require('./error.js')
-const Item = require('./item.js')
+// const Item = require('./item.js')
 const Store = require('./store.js')
 const Config = require('./config.js')
 const configDefault = require('./config-default.js')
@@ -57,6 +57,11 @@ class QGP9 {
     return this
   }
 
+  /**
+   * Set root directory where _config.yml located
+   * * Chainable
+   * @param {string} path
+   */
   setRoot (path) {
     this.root = path
     return this
@@ -64,6 +69,7 @@ class QGP9 {
 
   /**
    * Set backed db
+   * * Chainable
    * @param {object} store 
    */
   useStore (store) {
@@ -73,6 +79,7 @@ class QGP9 {
 
   /**
    * Register plugin
+   * * Chainable
    * @param {object} plugin
    */
   use (plugin) {
@@ -90,8 +97,7 @@ class QGP9 {
       updated: true
     })
     const plist = []
-    for (const itemRaw of items) {
-      const item = new Item(itemRaw)
+    for (const item of items) {
       const promise = this.trains.run('processItem', {h, item})
         .catch(ERROR)
       plist.push(promise)
@@ -100,6 +106,10 @@ class QGP9 {
     this.store.save()
   }
 
+  /**
+   * @private
+   * init function which will be invoked in the begining of any run
+   */
   async init() {
     if (!this.dbLoaded){
       await this.store.load()
@@ -111,11 +121,11 @@ class QGP9 {
     this.config._normalize()
 
     // Add page table
-    await this.store.getTableOrAdd('page', { 
+    await this.store.getOrAddTable('page', { 
       unique: ['src', 'url'],
       indices: ['collection']
     }).catch(ERROR)
-    await this.store.getTableOrAdd('file', { 
+    await this.store.getOrAddTable('file', { 
       unique: ['src', 'url'],
       indices: ['collection']
     }).catch(ERROR)
@@ -128,7 +138,9 @@ class QGP9 {
     }
   }
 
-
+  /**
+   * Run processCollection, processItem, processInstall
+   */
   async run () {
     const qgp = this
     const checkpoint = this.checkpoint = Date.now()
@@ -142,7 +154,10 @@ class QGP9 {
       .catch(ERROR)
     await this.store.save().catch(ERROR)
   }
-
+  
+  /**
+   * Run processPostInstall
+   */
   async postRun () {
     const qgp = this
     const checkpoint = this.checkpoint = Date.now()

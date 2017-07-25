@@ -3,18 +3,22 @@ class FrontMatter {
   constructor () {
     this.name = 'FrontMatter'
   }
+
   async register (qgp) {
-    this.config = qgp.config.get()
   }
-  async processItem ({item}) {
-    if (item.type() != 'page') return
+
+  async processItem ({item, h}) {
+    if (item.type != 'page') return
     try {
-      const matter = frontmatter(item.content())
-      item.setMatter(matter.data)
-      item.setContent(matter.content)
+      const matter = frontmatter(item.data)
+      item.matter = matter.data
+      item.data = matter.content
+      item.excert = matter.excert
+      h.item.manipulateMatter(item)
     } catch (e) {
       console.error(e)
-      // Do Nothing ?
+      // FIXME: Do Nothing ?
+      // TODO: TOML, JSON ?
     }
     return item
   }

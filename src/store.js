@@ -3,6 +3,7 @@
 const DB = require('lokijs')
 const {ERROR} = require('./error.js')
 
+/* TODO
 class Table {
   constructor (collection) {
     this.collection = collection
@@ -32,6 +33,7 @@ class Table {
     return this.collection.remove(item)
   }
 }
+*/
 
 class Store {
   constructor (dbfile) {
@@ -60,7 +62,7 @@ class Store {
     return table
   }
 
-  async getTableOrAdd (name, options = {} ) {
+  async getOrAddTable (name, options = {} ) {
     let table = await this.table(name).catch(ERROR)
     if(!table) {
       table = await this.addTable(name, options)

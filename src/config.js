@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const assert = require('assert')
 const yaml = require('js-yaml')
 const toml = require('toml')
 const fs = require('fs-extra')
@@ -53,11 +54,21 @@ class Config {
   }
 
   get(collname, option) {
+    assert(arguments.length === 2)
     let res
     if (collname && collname !== 'global') {
       res = _.get(this.config.collections[collname], option)
     }
     if (!res) res = _.get(this.config, option)
+    return res
+  }
+
+  gets(collname, ...args) {
+    assert(arguments.length >= 2)
+    let res = {}
+    for (const arg of args) {
+      res[arg] = this.get(collname, arg)
+    } 
     return res
   }
 

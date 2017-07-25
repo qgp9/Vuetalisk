@@ -1,33 +1,60 @@
+const path = require('path')
 //const slug = require('slug')
 
-const nameFormat = /^(?:(\d+-\d+-\d+)-)?(.*)\.([^.]+)$/
+const dateTitleFormat = /^(\d+-\d+-\d+)-(.+)\.([^.]+)$/
+const orderTitleFormat = /^(\d+)\.(.+)\.([^]+)$/
 
 class FilenameHandler {
   constructor () {
     this.name = 'FilenameHandler'
   }
   async register (qgp) {
-    this.config = qgp.config
-    this.collections = qgp.config.getGlobal('collection')
   }
 
-  async processItem ({item}) {
-    if (item.type() !== 'page') return
-    const collection = item.collection()
+  async processItem ({item, h}) {
+    if (item.type !== 'page') return
+    const collection = item.collection
 
-    let name = item.src()
-    name = name.replace(/\/index(\.\w+)$/, (m, p1) => p1)
-    name = name.split('/').pop()
-    const match = name.match(nameFormat)
-    if (match[1] && !item.date()) {
-      const date = new Date(match[1])
-      if (date) item.setDate(date)
+    let name = path.basename(item.path)
+    let cleanPath = item.path
+    // remove '/index'
+    if (name.match(/^index(\.[^.]+)?$/)) {
+      let dir = path.dirname(item.path)
+      let ext = path.extname(name)
+      name = path.basename(dir + ext)
+      cleanPath = dir + ext
     }
-    if (match[2]) {
-      if (!item.slug()) item.setSlug(match[2])
-      if (!item.title()) item.setTitle(match[2])
+    item.cleanPath = cleanPath
+
+    let match, date, title, ext, order
+    match = name.match(dateTitleFormat)
+    if (match) {
+      date = match[1]
+      title = match[2]
+      ext = match[3]
+    } 
+    if (!match) {
+      match = name.match(orderTitleFormat)
+      if (match) {
+        order = match[1]
+        title = match[2]
+        ext = match[3]
+      }
+    } 
+    // Most general way
+    if (!match) {
+      ext = path.extname(name)
+      title = name.slice(0, -ext.length)
     }
-    if (match[3] && !item.ext()) item.setExt(match[3])
+    if (date && !item.date) {
+      item.date = h.date(date)
+    }
+    if (title) {
+      if (!item.slug) item.slug = title
+      if (!item.title) item.title = title
+    }
+    if (ext && !item.ext) item.ext = ext
+    if (order && !item.order) item.order = order
   }
 }
 

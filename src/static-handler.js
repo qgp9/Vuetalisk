@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const Item = require('./item.js')
-const {ERROR, DEBUG} = require('./error.js')
+const {ERROR, DEBUG, LOG} = require('./error.js')
 
 class StaticHandler {
   constructor () {
@@ -9,33 +9,27 @@ class StaticHandler {
   }
 
   async register (qgp) {
-    this.config = qgp.config
-    this.store = qgp.store
-    this.root = qgp.root
   }
 
-  async processInstall ({checkpoint}) {
-    const filesTable = await this.store.table('file')
-    const files = filesTable.find({collection: 'static'})
+  async processInstall ({checkpoint, h}) {
+
+    const collname = 'static'
+    const files = await h.find(collname).catch(ERROR)
     const plist = []
-    for (const fileRaw of files) {
-      const item = new Item(fileRaw)
-      const src = path.join(this.root, item.path())
-      const target = path.join(
-        this.root,
-        this.config.get(item.collection(), 'target_dir'),
-        item.url()
-      )
-      if (item.updated()) {
+    for (const item of files) {
+      const src = h.pathItemSrc(item)
+      const target = h.pathItemTarget(item)
+      if (item.updated) {
         const promise = fs.copy(src, target)
-          .then(() => { item.setUpdated(false); filesTable.update(item.item) })
+          // .then(() => { item.updated = false; filesTable.update(item) })
           .catch(ERROR)
         plist.push(promise)
       }
-      if (item.lastChecked() < checkpoint) {
-        DEBUG('delete item ', item.path())
+      if (item.deleted) {
+        console.log('what!')
+        LOG(2, 'delete item ', item.path)
         const promise = fs.remove(target)
-          .then(() => filesTable.remove(item.item))
+          .then(() => h.remove(item))
           .catch(ERROR)
         plist.push(promise)
       }
