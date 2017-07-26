@@ -1,4 +1,4 @@
-let debugLevel = 10 
+let debugLevel = process.env.QGP_DEBUGLEVEL || 1 
 let verboseLevel = 1
 
 exports.ERROR = function (...args) {
@@ -14,15 +14,18 @@ exports.ERRMSG = function (...args) {
   }
 }
 
-
+let checkpoint = Date.now()
 exports.DEBUG = function (...args) {
   if (debugLevel < 1) {
     return false
   }
   if (typeof args[0] === 'number' && args.length > 1) {
     const level = args.shift()
+    let consume = Date.now() - checkpoint
+    checkpoint = Date.now()
+    consume = ('          ' + consume).slice(-10) 
     if (level <= debugLevel) {
-      console.log('DEBUG ' + '-'.repeat(level), ...args)
+      console.log('DEBUG ' + consume  + ' ' + '-'.repeat(level), ...args)
     }
   } else {
     console.log('DEBUG', ...args)

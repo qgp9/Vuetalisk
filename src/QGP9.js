@@ -1,21 +1,11 @@
 const nodepath = require('path')
-// const fs = require('fs-extra')
 const Train = require('night-train')
 const {ERROR, DEBUG} = require('./error.js')
-// const Item = require('./item.js')
 const Store = require('./store.js')
 const Config = require('./config.js')
 const configDefault = require('./config-default.js')
 const Helper = require('./helper.js')
 
-/*
-const FileLoader = require('./fileLoader.js')
-const FrontMatter = require('./frontmatter.js')
-const FilenameHandler = require('./filename-handler.js')
-const Permalink = require('./permalink.js')
-const ApiWriter = require('./api-writer.js')
-const StaticHandler = require('./static-handler.js')
-*/
 
 class QGP9 {
   constructor(config){
@@ -92,10 +82,8 @@ class QGP9 {
    * @private
    */ 
   async _processItems (h) {
-    const pages = await this.store.table('page').catch(ERROR)
-    const items =  pages.find({
-      updated: true
-    })
+    const type = 'page'
+    const items = await h.updatedList({type}).catch(ERROR)
     const plist = []
     for (const item of items) {
       const promise = this.trains.run('processItem', {h, item})
@@ -111,30 +99,18 @@ class QGP9 {
    * init function which will be invoked in the begining of any run
    */
   async init() {
-    if (!this.dbLoaded){
-      await this.store.load()
-        .catch(ERROR)
-      this.dbLoaded = true
-    }
+    await this.store.load().catch(ERROR)
+    this.table = await this.store.itemTable().catch(ERROR)
+    this.cache = await this.store.cacheTable().catch(ERROR)
 
     // Finalize config
     this.config._normalize()
 
-    // Add page table
-    await this.store.getOrAddTable('page', { 
-      unique: ['src', 'url'],
-      indices: ['collection']
-    }).catch(ERROR)
-    await this.store.getOrAddTable('file', { 
-      unique: ['src', 'url'],
-      indices: ['collection']
-    }).catch(ERROR)
-
     // register plugin
     if (!this.registered) {
-    await this.trains.runAsync('register', this)
-      .then(() => { this.registered = true })
-      .catch(ERROR)
+      await this.trains.runAsync('register', this)
+        .then(() => { this.registered = true })
+        .catch(ERROR)
     }
   }
 
@@ -142,19 +118,26 @@ class QGP9 {
    * Run processCollection, processItem, processInstall
    */
   async run () {
+    DEBUG(3, 'QGP9::Run')
     const qgp = this
     const checkpoint = this.checkpoint = Date.now()
     const h = new Helper(this)
+    DEBUG(3, 'QGP9::Init')
     await this.init().catch(ERROR)
+    DEBUG(3, 'QGP9::processCollection')
     await this.trains.run('processCollection', {h, qgp, checkpoint})
       .catch(ERROR)
+    DEBUG(3, 'QGP9::processItem')
     await this._processItems(h)
       .catch(ERROR)
+    DEBUG(3, 'QGP9::processInstall')
     await this.trains.run('processInstall', {h, qgp, checkpoint})
       .catch(ERROR)
+    DEBUG(3, 'QGP9::SaveDB')
     await this.store.save().catch(ERROR)
+    DEBUG(3, 'QGP9::DONE')
   }
-  
+
   /**
    * Run processPostInstall
    */

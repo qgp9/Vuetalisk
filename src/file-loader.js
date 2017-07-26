@@ -14,9 +14,6 @@ class FileLoader {
    * @private
    */
   async register (qgp) {
-    this.config = qgp.config
-    this.table = {}
-    this.root = qgp.root
   }
 
   /**
@@ -24,9 +21,8 @@ class FileLoader {
    * @private
    */
   async processCollection ({store, checkpoint, h}) {
+    DEBUG(3, 'FileLoader::processCollection     ', new Date)
     this.checkpoint = checkpoint
-    this.table.page = await h.getOrAddTable('page').catch(ERROR)
-    this.table.file = await h.getOrAddTable('file').catch(ERROR)
 
     const plist = []
     for (const collname in h.collections) {
@@ -38,18 +34,14 @@ class FileLoader {
     }
     await Promise.all(plist).catch(ERROR)
 
-
     LOG(5, 'check deleted')
-    for (const item of this.table.page.find({lastChecked: {$lt: checkpoint}})) {
-      LOG(2, 'deleted', item)
-      item.deleted = true
-    }
-    for (const item of this.table.file.find({lastChecked: {$lt: checkpoint}})) {
-      LOG(2, 'deleted', item)
+    for (const item of await h.find({lastChecked: {$lt: checkpoint}})) {
+      LOG(2, 'deleted', item.src)
       item.deleted = true
     }
 
     DEBUG('check deleted done')
+    DEBUG(3, 'FileLoader::processCollection:Done', new Date)
   }
 
   /* A wagon for night-train
@@ -69,51 +61,75 @@ class FileLoader {
       // Skip special
       if (filename[0] === '_') continue
       // Skip excludes
-      if ((h.config.get(collname, 'excludes') || {})[filename]) continue
+      if ((h.conf(collname, 'excludes') || {})[filename]) continue
       //
       const fullpath = npath.join(path, filename)
       const stat = fs.statSync(fullpath)
       if (stat.isDirectory()) {
+        // scan  directory reculsively
         await this._processCollectionIter(collname, fullpath, h).catch(ERROR)
       } else {
+        // Extension of  file
         const ext = npath.extname(filename)
-        const exts = h.config.get(collname, 'extensions')
+        const exts = h.conf(collname, 'extensions')
         if (!exts['*'] && !exts[ext]) continue
+        // path
+        // basePath is path from collection path
+        // example, with default config
+        // "_post/2017-07-25-hello-world.md" will become
+        // basePath =   "2017-07-25-hello-world.md"
+        // src = "/posts/2017-07-25-hello-world.md"
         let basePath = npath.relative(h.pathSrc(collname), fullpath)
-        let src_id = npath.join('/', collname, basePath)
-        let type = h.config.get(collname, 'type')
-        let item = this.table[type].by('src', src_id)
-        LOG(9, 'proces item', src_id, (item ? 'existing' : 'non-existing') + ' in DB')
+        let src = npath.join('/', collname, basePath)
+        let type = h.conf(collname, 'type')
+        // Check Database
+        let item = await h.get(src).catch(ERROR)
+        LOG(9, 'proces item', src, (item ? 'existing' : 'non-existing') + ' in DB')
         if (item) {
           item.lastChecked = h.checkpoint
-          let mtime = item.updatedAt
-          if (mtime < stat.mtimeMs) {
+          // Is updated ?
+          if (item.updatedAt < stat.mtimeMs) {
             item.updatedAt = h.date(stat.mtimeMs)
             item.updated = true
             item.deleted = false
             LOG(2, 'updated item', fullpath)
           }
-          this.table[type].update(item)
+          // await h.set(item).catch(ERROR)
         } else {
           let item = {
-            src: src_id,
+            src: src,
             path: basePath,
-            updatedA: h.date(stat.mtimeMs),
+            type: type,
+            collection: collname,
+            lastChecked: h.checkpoint,
+            updatedAt: h.date(stat.mtimeMs),
+            updated: true,
+            deleted: false
           }
-          item.src = src_id
-          if (type === 'page') {
-            item.url = '_temp_' + src_id
-          } else {
-            // TODO: should be done in permalink
-            item.url = npath.join('/', basePath)
+          switch (type) {
+            case 'page':
+              item.url = '_temp_' + src
+              item.isApi = true
+              item.isPage = true
+              item.isStatic = false
+              break;
+            case 'data':
+              item.url = npath.join('/', basePath)
+              item.isApi = true
+              item.isPage = false
+              item.isStatic = false
+              break;
+            case 'file':
+              item.url = npath.join('/', basePath)
+              item.isApi = false
+              item.isPage = false
+              item.isStatic = true
+              break;
+            default:
+              ERROR('Wrong type of item', item)
           }
-          item.updated = true
-          item.deleted = false
-          item.collection = collname
-          item.type = type
-          item.lastChecked = h.checkpoint
           LOG(2, 'add new item', item.path)
-          this.table[type].insert(item)
+          h.set(item)
         }
       }
     }

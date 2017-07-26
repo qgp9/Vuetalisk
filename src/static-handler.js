@@ -12,22 +12,23 @@ class StaticHandler {
   }
 
   async processInstall ({checkpoint, h}) {
-
-    const collname = 'static'
-    const files = await h.find(collname).catch(ERROR)
+    DEBUG(3, 'StaticHandler::processInstall     ', new Date)
+    const files = await h.find({
+      isStatic: true
+    }).catch(ERROR)
     const plist = []
     for (const item of files) {
       const src = h.pathItemSrc(item)
       const target = h.pathItemTarget(item)
-      if (item.updated) {
+      if (item.updated && !item.deleted) {
         const promise = fs.copy(src, target)
           // .then(() => { item.updated = false; filesTable.update(item) })
           .catch(ERROR)
         plist.push(promise)
       }
       if (item.deleted) {
-        console.log('what!')
         LOG(2, 'delete item ', item.path)
+        DEBUG(target)
         const promise = fs.remove(target)
           .then(() => h.remove(item))
           .catch(ERROR)
@@ -35,6 +36,7 @@ class StaticHandler {
       }
     }
     await Promise.all(plist).catch(ERROR)
+    DEBUG(3, 'StaticHandler::processInstall:Done', new Date)
   }
 }
 

@@ -10,22 +10,28 @@ class ListHandler {
   }
 
   async processInstall ({checkpoint, h}) {
-    // Table for list
-    const listTable = await h.getOrAddTable('list', {
-      unique: 'name'
-    })
-
+    LOG(3, 'ListHandler::processInstall     ', new Date)
     // Collection Loop
-    for (const collname in h.collections) {
+    for (const collection in h.collections) {
       const {list, pagenation, archive, archive_by} = 
-        h.confs(collname, 'list', 'pagenation', 'achive', 'archive_by')
+        h.confs(collection, ['list', 'pagenation', 'achive', 'archive_by'])
       if (list) {
-        const compactList = await h.getProperListCompact(collname) 
+        const itemList = await h.properList({collection}) 
         // Actual writing will be handled by ApiWriter
-        let item = listTable.by('name', collname)
-        let newItem = {
-          name: collname,
+        // Not use Cached data yet
+        const compactList = []
+        for (const item of itemList){
+          compactList.push(h.item.genOutput(_.omit(item, [
+            'data',
+            'matter',
+            'slug'
+          ])))
+        }
+        // DEBUG('LISTMAN ', compactList[5])
+        let item = {
+          name: collection,
           url: list,
+          src: list,
           type: 'list',
           pagenation,
           archive,
@@ -33,13 +39,17 @@ class ListHandler {
           data: compactList,
           updatedAt: h.date(checkpoint),
           lastChecked: h.date(checkpoint),
-          updated: true
+          updated: true,
+          deleted: false,
+          isApi: true,
+          isPage: true,
+          isStatic: false
         }
-        if (!item) listTable.insert(newItem)
-        else listTable.update(Object.assign(item, newItem))
+        await h.set(item).catch(ERROR)
       }
     }
     h.collectionListUpdated = true
+    LOG(3, 'ListHandler::processInstall:Done', new Date)
   }
 }
 

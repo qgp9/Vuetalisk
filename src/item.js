@@ -35,9 +35,6 @@ const itemApiFormat = {
   matter: {
     // All user front matter
   },
-  meta: {
-    // Any additional
-  },
   // UNIQUE
   url: '',        // url except api/. UNIQUE
   // all date/time should be linux time in milliseconds.
@@ -46,8 +43,10 @@ const itemApiFormat = {
   title: '',
   slug: '',
   excert: '',
+  description: '',
   fiigure: '',
   order: 0,
+  weight: 0,
   //
   collection: '',
   data: '', // content or list or object
@@ -69,7 +68,7 @@ class Item {
   static manipulateMatter (item) {
     const matter = item.matter
     if (!matter) return
-    for (const field of ['title', 'date', 'slug', 'excert', 'figure']) {
+    for (const field of ['title', 'date', 'slug', 'excert', 'figure', 'description', 'order', 'weight']) {
       if (matter[field]) item[field] = matter[field]
     }
     item.date  = new Date(item.date).getTime()

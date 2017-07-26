@@ -63,8 +63,8 @@ class Config {
     return res
   }
 
-  gets(collname, ...args) {
-    assert(arguments.length >= 2)
+  gets(collname, args) {
+    assert(Array.isArray(args))
     let res = {}
     for (const arg of args) {
       res[arg] = this.get(collname, arg)

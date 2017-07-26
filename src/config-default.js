@@ -16,6 +16,7 @@ const configDefault = {
       path: '.',
       permalink: '/:path',
       list: '/pages/list',
+      sort: ['dir', 'order'],
       pagenation: 20,
       archive: false
     },
@@ -23,6 +24,7 @@ const configDefault = {
       type: 'page',
       path: '_posts',
       list: '/posts/list',
+      sort: ['date'],
       pagenation: 20,
       archive: '/archive'
     },

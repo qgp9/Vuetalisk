@@ -15,35 +15,26 @@ class ApiWriter {
 
   // TODO write page, list, delete deleted
   async processInstall ({checkpoint, h}) {
-    // PAGE
-    const pages = await h.getUpdatedList('', 'page').catch(ERROR)
+    DEBUG(3, 'ApiWriter:processInstall     ', new Date)
+    // items whatever has isApi = true
+    const items = await h.updatedList({
+      isApi: true
+    }).catch(ERROR)
+
+    const list = await  h.find({type:'list'})
+
     let plist = []
-    for (const item of pages) {
+    for (const item of items) {
       const promise = fs.outputJson(
         h.pathItemApi(item),
         h.item.genOutput(item)
       ).catch(ERROR)
       plist.push(promise)
-    }
-    await Promise.all(plist).catch(ERROR)
-
-    // List
-    // TODO : sorting by date or url tree ?
-    plist = []
-    const lists = await h.getUpdatedList('', 'list').catch(ERROR)
-    DEBUG(lists)
-    for (const item of lists) {
-      const promise = fs.outputJson(
-        h.pathItemApi(item),
-        h.item.genOutput(item)
-      ).catch(ERROR)
-      plist.push(promise)
-
-      // TODO pagenation, archive. really need?
     }
     await Promise.all(plist).catch(ERROR)
 
     await this._write_siteinfo(h).catch(ERROR)
+    DEBUG(3, 'ApiWriter:processInstall:Done', new Date)
   }
 
   async _write_siteinfo (h) {

@@ -16,7 +16,8 @@ class Helper {
     this.checkpoint = qgp.checkpoint
     this.item = Item
     this.types = ['page', 'file', 'list'] // TODO: data
-
+    this.table = qgp.table
+    this.cache = qgp.cache
   }
 
 
@@ -29,8 +30,12 @@ class Helper {
    * @param {...string} fields wanted fields
    * @return {Object} object keyed by fields with value
    */
-  confs (collname, ...fields) { 
-    return this.config.gets(collname, ...fields)
+  confs (collname, fields) { 
+    return this.config.gets(collname, fields)
+  }
+
+  conf (collname, field) {
+    return this.config.get(collname, field)
   }
 
   /**
@@ -161,8 +166,8 @@ class Helper {
     let url = item.url
     if (url === '/') url += 'index'
     return this.pathApi(
-      item.type !== 'list' ? item.collection : '',
-      'url',
+      item.collection,
+      (item.isPage ? 'url' : ''),
       url + '.json'
     )
   }
@@ -172,115 +177,85 @@ class Helper {
    * @note If a method gets both of collection and type as arguments, type has prority. 
    */
 
-  /* Get table by collection or type
-   * "type" has priority
-   * @param {string} collname name of collection
-   * @param {string} type name of type
-   */
-  async table (collname, type) {
-    return await this.qgp.store.getTable(
-      type ? type : this.config.get(collname, 'type')
-    )
-  }
-  
-  /* Get table of item
-   * @param {Object} item
-   */
-  async tableOfItem (item) {
-    const type = item.type || this.config.get(item.collection, 'type')
-    return await this.table('', type).catch(ERROR)
-  }
 
   /* Find items from table by collname, type
    * @param {string} collname name of collection
    * @param {string} type name of type
    * @param {Object} query not recommended
    */
-  async find (collname, type, query = {}) {
-    if (!type) type = this.config.get(collname, 'type')
-    const table = await this.store.table(type).catch(ERROR)
-    if (collname) query.collection = collname
-    return table.find(query)
+  async find (query = {}) {
+    return await this.store.findItem(query)
   }
   
-  /* Get or Add table from/to Store
-   * @param {string} name table name
-   * @param {Object} options not recomended
-   */
-    async getOrAddTable (...args) {
-      return await this.store.getOrAddTable(...args)
-    }
-
   /**
    * Get proper list of item for any collection.
    * proper means not deleted and will be written as API
-   * @param {String} collname name of collection
-   * @param {string} type name of type
+   * @return {Object} query
    * @return {Array} list of items
    */
-  async getProperList (collname, type) {
-    return await this.find(collname, type, {deleted: false})
+  async properList (query = {}) {
+    query.deleted = false
+    return await this.store.findItem(query)
   }
 
   /**
    * Get list of upated item for any collection/type.
    * proper means not deleted and will be written as API
-   * @param {String} collname name of collection
-   * @param {string} type name of type
+   * @return {Object} query
    * @return {Array} list of items
    */
-  async getUpdatedList (collname, type) {
-    return await this.find(collname, type, {updated: true})
+  async updatedList (query = {}) {
+    query.updated = true
+    return await this.store.findItem(query)
   }
 
   /**
    * Get list of deleted item for any collection/type.
    * proper means not deleted and will be written as API
-   * @param {String} collname name of collection
-   * @param {string} type name of type
+   * @return {Object} query
    * @return {Array} list of items
    */
-  async getDeletedList (collname, type) {
-    return await this.find(collname, type, {deleted: true})
+  async deletedList (query = {}) {
+    query.deleted = true
+    return await this.store.findItem(query)
   }
 
+
+
   /**
-   * Return a proper list of item without data for any collection
-   * "proper" means not deleted and will be written as API
-   * Once list handler insert lists to database, it will be used instead of new generation
-   * @param {String} collname name of collection
-   * @return {Array} list of items
+   * @param {string} url 
    */
-  async getProperListCompact (collname) {
-    if (this.collectionListUpdated) {
-      const table = await this.table('list')
-      return table.by('name', collname)
-    }
-    const list = []
-    for (const item of await this.getProperList(collname)) {
-      list.push(_.omit(item, ['data']))
-    }
-    return list
+  async get (src) {
+    return await this.store.getItem(src)
   }
 
+  async set (item) {
+    return await this.store.setItem(item)
+  }
   /**
-   * remove item from proper table
+   * remove item from store
    * @param {object} item
    */
   async remove (item) {
-    await this.tableOfItem(item).then(table => table.remove(item))
-      .catch(ERROR)
+    await this.store.removeItem(item)
   }
+
 
   /**
-   * Update item in proper table
-   * @param {object} item
+   * @namespace Cache
    */
-  async update (item) {
-    await this.tableOfItem(item).then(table => table.update(item))
-      .catch(ERROR)
+
+  async cache (name) {
+    return await this.store.getCache(name)
   }
 
+  async setCache (item) {
+    return await this.store.setCache(item)
+  }
+
+  async removeCache (item) {
+    await this.store.removeCache(item)
+  }
 
   /**
    * @namespace Etc
