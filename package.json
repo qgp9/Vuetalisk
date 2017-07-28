@@ -31,9 +31,9 @@
     "vuetalisk-clean.js": "bin/vuetalisk-clean.js"
   },
   "files": [
-    "./*.js",
-    "src",
-    "bin"
+    "*.js",
+    "src/*.js",
+    "bin/*.js"
   ],
   "dependencies": {
     "commander": "^2.11.0",
