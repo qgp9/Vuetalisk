@@ -1,4 +1,32 @@
 {
+  "name": "vuetalisk",
+  "description": "Static Site Generator for Vue",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qgp9/Vuetalisk.git"
+  },
+  "keywords": [
+    "vue",
+    "Static",
+    "Site",
+    "Generator"
+  ],
+  "author": "qgp9 <pauljang9@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qgp9/Vuetalisk/issues"
+  },
+  "homepage": "https://github.com/qgp9/Vuetalisk#readme",
+  "bin": {
+    "vuetalisk": "bin/vuetalisk",
+    "vuetalisk-build.js": "bin/vuetalisk-build.js",
+    "vuetalisk-clean.js": "bin/vuetalisk-clean.js"
+  },
   "dependencies": {
     "commander": "^2.11.0",
     "debug": "^2.6.8",
@@ -12,28 +40,5 @@
     "nuxt": "^1.0.0-rc3",
     "toml": "^2.3.2"
   },
-  "name": "vuetalisk",
-  "description": "Static Site Generator for Vue",
-  "version": "0.0.1",
-  "main": "index.js",
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/qgp9/qgp9.git"
-  },
-  "keywords": [
-    "vue",
-    "Static",
-    "Site",
-    "Generator"
-  ],
-  "author": "qgp9 <pauljang9@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/qgp9/qgp9/issues"
-  },
-  "homepage": "https://github.com/qgp9/qgp9#readme"
+  "devDependencies": {}
 }
