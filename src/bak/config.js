@@ -1,4 +1,4 @@
-const {debug, log} = require('../debug')('Config')
+const {debug, log} = require('./debug')('Config')
 const _ = require('lodash')
 const assert = require('assert')
 const fs = require('fs')

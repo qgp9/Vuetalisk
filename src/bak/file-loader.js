@@ -92,9 +92,6 @@ class FileLoader {
             item.updated = true
             item.deleted = false
             LOG(2, 'updated item', fullpath)
-          } else {
-            item.updated = false
-            item.deleted = false
           }
           // await h.set(item).catch(ERROR)
         } else {

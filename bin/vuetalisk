@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+const {debug} = require('../debug')('cmd:main')
+debug('start')
+const path = require('path')
+const fs = require('fs')
+
+const cwd = process.cwd()
+const mwd = __dirname
+
+debug('Load vuetal')
+const vuetalConf = require(path.join(cwd, 'vuetalisk.config.js'))
+debug('Load _config')
+const _config = vuetalConf._config
+const customCommands = _config.build.commands || {}
+const package = require(path.join(cwd, 'package.json'))
+
+const commands = {
+  clean: 'Clean API, assets, pages, database, vue/nuxt build',
+  build: `Build site. Default is '-ap' means 'build all`
+}
+
+debug('Load commander')
+const commander = require('../src/commander')
+
+commander
+  .version(package.version)
+  .usage('<command> [options]')
+  .customCommands(commands, customCommands, 'vuetalisk', ['bin', 'build'], cwd)
+  .parse(process.argv)
+
+debug('done')

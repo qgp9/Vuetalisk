@@ -1,4 +1,4 @@
-const {debug} = require('../debug')('FrontMatter')
+const {debug} = require('./debug')('FrontMatter')
 let frontmatter
 
 class FrontMatter {

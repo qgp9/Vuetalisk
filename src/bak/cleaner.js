@@ -19,6 +19,7 @@ class Cleaner {
   async processInstall ({checkpoint, h}) {
     DEBUG(3, 'Cleaner::processInstall     ', new Date())
     for (const item of await h.updatedList()) {
+      item.updated = false
       if (true || item.type === 'page') {
         item.data = undefined
       }

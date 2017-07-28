@@ -1,6 +1,6 @@
 'use strict'
 
-const {debug, log, ERROR} = require('../debug')('Store')
+const {debug, log, ERROR} = require('./debug')('Store')
 const DB = require('lokijs')
 const fs = require('fs')
 

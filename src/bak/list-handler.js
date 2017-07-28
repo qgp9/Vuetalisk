@@ -1,4 +1,4 @@
-const {log, debug, ERROR} = require('../debug')('ListHandler')
+const {log, debug, ERROR} = require('./debug')('ListHandler')
 const _ = require('lodash')
 
 class ListHandler {

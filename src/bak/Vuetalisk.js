@@ -1,27 +1,26 @@
+const {debug, warn, log, error, ERROR} = require('./debug')('')
+debug('start')
 const nodepath = require('path')
-const Train = require('night-train')
-const {ERROR, DEBUG} = require('./error.js')
-const Store = require('./store.js')
-const Config = require('./config.js')
-const configDefault = require('./config-default.js')
-const Helper = require('./helper.js')
+let Helper
 
+function srcPath(...args) { return nodepath.resolve(__dirname, ...args) }
 
-class QGP9 {
+class Vuetalisk {
   constructor(config){
+    const Config = require('./config')
     this.root = '.'
     this.config = new Config
-    this.config.addObj(configDefault)
-    this.trains = new Train([
+    this.config.addObj(require('./config-default.js'))
+    this.trains = new (require('night-train'))([
       'processCollection',
       'processItem',
       'processInstall',
-      'processPostInstall',
-      'cleanInstall',
-      'cleanPostInstall'
+      'processPostInstall'
     ])
     this.dbLoaded = false
     this.registered = false
+    this.helper = undefined
+    Helper = require('./helper.js')
   }
 
   /**
@@ -30,8 +29,15 @@ class QGP9 {
    * * dupllecated ivoking cause merging of config files
    * @param {string} path path of configuration file. Possible extensions are yml, yaml, tml, toml, js, json
    */
-  configure (path) {
-    this.config.addFile(nodepath.join(this.root, path))
+  configure (config) {
+    if (typeof config === 'object') {
+      this.config.addObj(config)
+    } else {
+      this.config.addFile(nodepath.join(this.root, path))
+    }
+    this.config._normalize()
+    // @important this.helper is only for command. don't use this in plugin
+    this.helper = new Helper(this)
     return this
   }
 
@@ -62,18 +68,29 @@ class QGP9 {
    * * Chainable
    * @param {object} store 
    */
-  useStore (store) {
-    this.store = store
+  useStore (store, ...args) {
+    if (typeof store === 'string') {
+      const Store = require(srcPath(store))
+      this.store =  new Store(...args)
+    } else {
+      this.store = store
+    }
     return this
   }
+
 
   /**
    * Register plugin
    * * Chainable
    * @param {object} plugin
    */
-  use (plugin) {
-    this.trains.register(plugin)
+  use (plugin, ...args) {
+    if (typeof plugin === 'string') {
+      const Plugin = require(srcPath(plugin))
+      this.trains.register(new Plugin(...args))
+    } else {
+      this.trains.register(plugin)
+    }
     return this
   }
 
@@ -99,12 +116,15 @@ class QGP9 {
    * init function which will be invoked in the begining of any run
    */
   async init() {
+    debug('Init')
     await this.store.load().catch(ERROR)
     this.table = await this.store.itemTable().catch(ERROR)
     this.cache = await this.store.cacheTable().catch(ERROR)
+    debug('Store loaded')
 
     // Finalize config
     this.config._normalize()
+    debug('Config nomalized')
 
     // register plugin
     if (!this.registered) {
@@ -112,60 +132,56 @@ class QGP9 {
         .then(() => { this.registered = true })
         .catch(ERROR)
     }
+    debug('Registration done')
   }
 
   /**
    * Run processCollection, processItem, processInstall
    */
   async run () {
-    DEBUG(3, 'QGP9::Run')
-    const qgp = this
+    log('Run')
+    const vuetalisk = this
     const checkpoint = this.checkpoint = Date.now()
     const h = new Helper(this)
-    DEBUG(3, 'QGP9::Init')
+    debug('Init')
     await this.init().catch(ERROR)
-    DEBUG(3, 'QGP9::processCollection')
-    await this.trains.run('processCollection', {h, qgp, checkpoint})
+    debug('processCollection')
+    await this.trains.run('processCollection', {h, vuetalisk, checkpoint})
       .catch(ERROR)
-    DEBUG(3, 'QGP9::processItem')
+    debug('processItem')
     await this._processItems(h)
       .catch(ERROR)
-    DEBUG(3, 'QGP9::processInstall')
-    await this.trains.run('processInstall', {h, qgp, checkpoint})
+    debug('processInstall')
+    await this.trains.run('processInstall', {h, vuetalisk, checkpoint})
       .catch(ERROR)
-    DEBUG(3, 'QGP9::SaveDB')
+    debug('SaveDB')
     await this.store.save().catch(ERROR)
-    DEBUG(3, 'QGP9::DONE')
+
+    log('Well Done')
   }
 
   /**
    * Run processPostInstall
    */
   async postRun () {
-    const qgp = this
+    log('PostRun')
+    const vuetalisk = this
     const checkpoint = this.checkpoint = Date.now()
     const h = new Helper(this)
+
     await this.init().catch(ERROR)
-    await this.trains.run('processPostInstall', {h, qgp, checkpoint})
+
+    debug('processPostInstall')
+    await this.trains.run('processPostInstall', {h, vuetalisk, checkpoint})
       .catch(ERROR)
+    log('Well Done')
   }
 
-  async cleanInstall () {
-    const qgp = this
-    const checkpoint = this.checkpoint = Date.now()
-    const h = new Helper(this)
-    await this.init().catch(ERROR)
-    // await this.trains.run('cleanInstall', {qgp}).catch(ERROR)
-    await this.store.delete().catch(ERROR)
-  }
-
-  async cleanPostInstall () {
-    const qgp = this
-    const checkpoint = this.checkpoint = Date.now()
-    const h = new Helper(this)
-    await this.init().catch(ERROR)
-    await this.trains.run('cleanPostInstall', {h, qgp}).catch(ERROR)
+  static require (module) {
+    return require(srcPath(module))
   }
 }
 
-module.exports = QGP9
+debug('Vuetalisk loaded')
+
+module.exports = Vuetalisk

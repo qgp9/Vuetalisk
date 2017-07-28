@@ -1,17 +1,21 @@
 {
   "dependencies": {
+    "commander": "^2.11.0",
+    "debug": "^2.6.8",
+    "express": "^4.15.3",
     "fs-extra": "^4.0.0",
     "gray-matter": "^3.0.2",
     "js-yaml": "^3.9.0",
     "lodash": "^4.17.4",
     "lokijs": "^1.5.0",
     "night-train": "^0.0.2",
+    "nuxt": "^1.0.0-rc3",
     "toml": "^2.3.2"
   },
-  "name": "QGP9",
+  "name": "vuetalisk",
   "description": "Static Site Generator for Vue",
   "version": "0.0.0",
-  "main": "src/QGP9.js",
+  "main": "index.js",
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

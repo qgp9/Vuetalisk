@@ -1,4 +1,4 @@
-const {log, debug, ERROR} = require('../debug')('Helper')
+const {log, debug, ERROR} = require('./debug')('Helper')
 const path = require('path')
 const _ = require('lodash')
 const Item = require('./item.js')
