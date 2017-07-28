@@ -13,7 +13,7 @@ const vuetalConf = require(path.join(cwd, 'vuetalisk.config.js'))
 debug('Load _config')
 const _config = vuetalConf._config
 const customCommands = _config.build.commands || {}
-const package = require(path.join(cwd, 'package.json'))
+const package = require(path.join(mwd, '..', 'package.json'))
 
 const commands = {
   clean: 'Clean API, assets, pages, database, vue/nuxt build',

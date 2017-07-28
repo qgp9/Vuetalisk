@@ -101,8 +101,8 @@ class NuxtGenerator {
         }
         if (!nuxt) {
           log('Load Nuxt')
-          const {Nuxt, options} = loadNuxt(h.root)
-          nuxt = new Nuxt(options)
+          const {Nuxt, nuxtOpts} = loadNuxt(h.root)
+          nuxt = new Nuxt(nuxtOpts)
         }
 
         const res = await nuxt.renderRoute(url)
