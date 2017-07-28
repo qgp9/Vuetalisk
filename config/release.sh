@@ -8,7 +8,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
   echo "Releasing $VERSION ..."
   # npm test
-  VERSION=$VERSION npm run build
+  # VERSION=$VERSION npm run build
 
   # commit
   git add -A

@@ -1,0 +1,12 @@
+.*
+*.log
+*.swp
+*.yml
+coverage
+docs/_book
+config
+example
+dist
+dist/*.map
+lib
+test

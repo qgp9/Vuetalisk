@@ -1,3 +1,15 @@
 node_modules
 .config.js
+lib
+dist
+dist/*.gz
+dist/index.html
+dist/static
+docs/_book
+test/e2e/report
+test/e2e/screenshots
+node_modules
+.DS_Store
+*.log
+*.swp
 *~
