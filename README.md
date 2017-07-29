@@ -26,7 +26,7 @@ yarn add vuetalisk
 # Set up
 Vuetalisk needs a configuraion file `vuetalisk.config.js` on root directory of a project.
 
-Basically the configuration needs four functions.
+Basically the configuration needs to expose four functions `config`, `init`, `buildApi`, `buildPage`.
 ```js
 const Vuetalisk = require('vuetalisk')
 
@@ -101,5 +101,5 @@ const buildPage = () =>
   init()
     .use('nuxt-generator')
 
-module.exports = {config, init, buildApi, buildPage, _config}
+module.exports = {config, init, buildApi, buildPage}
 ```
