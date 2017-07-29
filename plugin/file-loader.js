@@ -1,9 +1,7 @@
 const npath = require('path')
 const fs = require('fs-extra')
-const Item = require('./item.js')
-const {DEBUG, ERROR, ERRMSG, MyLog} = require('./error.js')
-
-const LOG = MyLog('FileLoader')
+const Item = require('../src/item.js')
+const {debug, log, ERROR} = require('../debug')('file-loader')
 
 class FileLoader {
   constructor () {
@@ -21,26 +19,26 @@ class FileLoader {
    * @private
    */
   async processCollection ({store, checkpoint, h}) {
-    DEBUG(3, 'FileLoader::processCollection     ', new Date)
+    debug('processCollection     ', new Date)
     this.checkpoint = checkpoint
 
     const plist = []
     for (const collname in h.collections) {
       const fullpath = h.pathSrc(collname)
-      LOG(5, 'Start iteration of processCollection.', collname, fullpath)
+      log('Start iteration of processCollection.', collname, fullpath)
       const promise = this._processCollectionIter(collname, fullpath, h)
-        .catch(ERRMSG('Error in locadCollection'))
+        .catch(ERROR)
       plist.push(promise)
     }
     await Promise.all(plist).catch(ERROR)
 
-    LOG(4, 'check deleted')
+    log('check deleted')
     for (const item of await h.find({lastChecked: {$lt: checkpoint}})) {
-      LOG(2, 'deleted', item.src)
+      debug('deleted', item.src)
       item.deleted = true
     }
 
-    DEBUG(3, 'FileLoader::processCollection:Done', new Date)
+    debug('processCollection:Done', new Date)
   }
 
   /* A wagon for night-train
@@ -83,7 +81,6 @@ class FileLoader {
         let type = h.conf(collname, 'type')
         // Check Database
         let item = await h.get(src).catch(ERROR)
-        LOG(9, 'proces item', src, (item ? 'existing' : 'non-existing') + ' in DB') 
         if (item) {
           item.lastChecked = h.checkpoint
           // Is updated ?
@@ -91,7 +88,6 @@ class FileLoader {
             item.updatedAt = h.date(stat.mtimeMs)
             item.updated = true
             item.deleted = false
-            LOG(2, 'updated item', fullpath)
           } else {
             item.updated = false
             item.deleted = false
@@ -130,7 +126,6 @@ class FileLoader {
             default:
               ERROR('Wrong type of item', item)
           }
-          LOG(2, 'add new item', item.path)
           h.set(item)
         }
       }

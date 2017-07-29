@@ -6,7 +6,7 @@ class Cmd {
     this.program = program || require('commander')
     this.start = Date.now()
     this.debug = {log: v => {}} // do nothing yet
-    this.vuetal
+    this.vuetalConf
   }
 
   base () {
@@ -19,16 +19,16 @@ class Cmd {
     if (program.quiet) {
     } else {
       if (!process.env.DEBUG)
-        process.env.DEBUG = 'Vuetal:*,-Vuetal:debug:*'
+        process.env.DEBUG = 'vuetal:*,-vuetal:debug:*'
     }
     this.debug = require('./debug')('cmd:' + this.name)
     return this.debug
   }
 
-  vuetal (root, vuetal) {
+  vuetalConf (root, confPath) {
     if (!root) root = process.cwd()
-    if (!vuetal) vuetal = 'vuetalisk.config.js'
-    return require(path.join(root, vuetal))
+    if (!confPath) confPath = 'vuetalisk.config.js'
+    return require(path.join(root, confPath))
   }
 
   timeEnd () {

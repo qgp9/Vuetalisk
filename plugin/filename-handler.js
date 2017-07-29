@@ -1,5 +1,4 @@
 const path = require('path')
-//const slug = require('slug')
 
 const dateTitleFormat = /^(\d+-\d+-\d+)-(.+)\.([^.]+)$/
 const orderTitleFormat = /^(\d+)\.(.+)\.([^]+)$/

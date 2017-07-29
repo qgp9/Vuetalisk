@@ -4,7 +4,7 @@ const fs = require('fs-extra')
 const {debug, log, ERROR} = require('../debug')('NuxtGenerator')
 
 var resolve = path.resolve
-process.env.DEBUG = 'nuxt:*,Vuetal:*'
+//process.env.DEBUG = 'nuxt:*,Vuetal:*'
 
 
 class NuxtGenerator {
@@ -19,14 +19,22 @@ class NuxtGenerator {
   async processPostInstall ({checkpoint, h, options}) {
     if (!options) options = {}
 
+    const server = require('../src/server')(h.pathTarget())
+    server.listen()
+
     // Check nuxt dist ./.nuxt/dist
-    const distStats = fs.statSync(path.join(h.root, '.nuxt', 'dist'))
-    const distMtime = distStats.mtimeMs
+    let distStats = undefined 
+    try {
+      distStats = fs.statSync(path.join(h.root, '.nuxt', 'dist'))
+    } catch (e) {
+      log(`nuxt dist doesn't exists. let's build now`)
+    }
+    const distMtime = distStats ? distStats.mtimeMs : Date.now()
     const nuxtConfig = require(path.join(h.root,'nuxt.config.js'))
     const nuxtSrcDir = path.join(h.root, nuxtConfig.srcDir)
 
     let isChanged = true
-    if (!options.forceBuild) {
+    if (!options.forceBuild && distStats) {
       isChanged = await scanDir(nuxtSrcDir, distMtime)
     }
 
@@ -63,11 +71,11 @@ class NuxtGenerator {
       log('%d pages to update', pages.length)
     }
 
-
-    let server
+    await server.wait(200) // 200ms *FROM* server start.
 
     log(`Start Renering`)
     const start = Date.now()
+    const plist = []
     for (const item of pages) {
       const url = item.url
       const outpath = path.join(target, item.url, 'index.html')
@@ -85,41 +93,22 @@ class NuxtGenerator {
 
       // doRender = true
       if (doRender) {
-        if (!server) {
-          log('Load Exporess')
-          const express = require ('express')
-          const serveStatic = require('serve-static')
-          var port = process.env.PORT || process.env.npm_package_config_nuxt_port || '3000'
-          var host = process.env.HOST || process.env.npm_package_config_nuxt_host || '127.0.0.1'
-          process.env.QGP_API_PROTOCOL = 'http'
-          process.env.QGP_API_HOST = host
-          process.env.QGP_API_PORT = port
-          const app = express()
-          app.use(serveStatic(path.join(h.root, 'dist')))
-          server = require('http').createServer(app);
-          server.listen(port, host)
-        }
         if (!nuxt) {
           log('Load Nuxt')
           const {Nuxt, nuxtOpts} = loadNuxt(h.root)
           nuxt = new Nuxt(nuxtOpts)
-        }
+        } 
 
         const res = await nuxt.renderRoute(url)
           .catch(ERROR)
         if (res.error) {
-          ERROR(error)
+          ERROR(res.error)
         }
         await fs.outputFile(outpath, res.html).catch(ERROR)
       }
     }
     debug('nuxt time: ', Date.now() - start)
-    if (server) {
-      const timer = setInterval(() => {
-        server.close()
-        if (!server.address()) clearInterval(timer)
-      }, 50)
-    }
+    if (server) server.close()
     if (nuxt) nuxt.close()
   }
 }

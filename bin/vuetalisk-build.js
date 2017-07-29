@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const cmd = require('../cmd-helper')('clean')
+const cmd = require('../cmd-helper')('build')
 const path = require('path')
 
 const program = cmd.base()
@@ -9,33 +9,43 @@ program
   .option('-f, --force', 'Force to build Nuxt/Vue libray')
   .option('-p, --page', 'Build pages. Nuxt/Vue can be compiled in advance')
   .option('-a, --api', 'Build API, statics')
+  .option('-c, --clean', 'Clean data base, remove dist before build')
   .parse(process.argv)
 
 const {debug, log, ERROR} = cmd.run()
-let vuetal = cmd.vuetal()
+let vuetalConf = cmd.vuetalConf()
 
 const options = {}
 
-action().catch(ERROR)
+if (!module.parent) {
+  action().catch(ERROR)
+}
 
-async function action () {
-  if (program.force) options.forceBuild = true
+async function action (opts = {}) {
+  if (program.force) opts.forceBuild = true
 
   if (!program.page && !program.api) {
     program.page = true
     program.api = true
   }
 
-  if (program.api) await buildApi()
-  if (program.page) await buildPage()
-  
+  if (program.clean) {
+    await require('./vuetalisk-clean').action()
+  }
+
+  if (program.api) await buildApi(opts)
+  if (program.page) await buildPage(opts)
+
   cmd.timeEnd()
 }
 
-async function buildApi () {
-  await vuetal.buildApi().run(options).catch(ERROR)
+async function buildApi (opts) {
+  await vuetalConf.buildApi().run(opts).catch(ERROR)
 }
 
-async function buildPage () {
-  await vuetal.buildPage().run(options).catch(ERROR)
+async function buildPage (opts) {
+  await vuetalConf.buildPage().run(opts).catch(ERROR)
 }
+
+module.exports = {cmd, buildApi, buildPage}
+

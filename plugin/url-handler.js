@@ -1,8 +1,8 @@
-const {DEBUG, ERROR} = require('./error.js')
+const {debug, ERROR} = require('../debug')('url-handler')
 
-class Permalink {
+class UrlHandler {
   constructor () {
-    this.name = 'Permalink'
+    this.name = 'UrlHandler'
   }
   async register (vuetalisk) {
   }
@@ -45,4 +45,4 @@ class Permalink {
   }
 }
 
-module.exports = Permalink
+module.exports = UrlHandler

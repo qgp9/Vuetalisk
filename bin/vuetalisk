@@ -10,14 +10,15 @@ const mwd = __dirname
 
 debug('Load vuetal')
 const vuetalConf = require(path.join(cwd, 'vuetalisk.config.js'))
-debug('Load _config')
-const _config = vuetalConf._config
-const customCommands = _config.build.commands || {}
+debug('Load config')
+const helper = vuetalConf.init().helper
+const customCommands = helper.conf('', 'build.commands') || {}
 const package = require(path.join(mwd, '..', 'package.json'))
 
 const commands = {
   clean: 'Clean API, assets, pages, database, vue/nuxt build',
-  build: `Build site. Default is '-ap' means 'build all`
+  build: `Build site. Default is '-ap' means 'build all`,
+  dev: 'Vuetalisk + Nuxt/Vue dev mode'
 }
 
 debug('Load commander')

@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs-extra')
-const {DEBUG, ERROR, LOG} = require('./error.js')
+const {debug, log, ERROR} = require('../debug')('cleaner')
 
 /**
  * Managge deleted file in DB, Dist
@@ -17,7 +17,7 @@ class Cleaner {
   }
 
   async processInstall ({checkpoint, h}) {
-    DEBUG(3, 'Cleaner::processInstall     ', new Date())
+    debug('processInstall     ', new Date())
     for (const item of await h.updatedList()) {
       if (true || item.type === 'page') {
         item.data = undefined
@@ -32,7 +32,7 @@ class Cleaner {
         .then(() => h.remove(item))
         .catch(ERROR)
     }
-    DEBUG(3, 'Cleaner::processInstall:Done', new Date())
+    debug('processInstall:Done', new Date())
   }
 }
 

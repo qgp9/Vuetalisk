@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
-const {DEBUG, ERROR} = require('./error.js')
-const Item = require('./item.js')
+const {debug, log, ERROR} = require('../debug.js')('api-writer')
+const Item = require('../src/item.js')
 const _ = require('lodash')
 
 
@@ -14,8 +14,8 @@ class ApiWriter {
   }
 
   // TODO write page, list, delete deleted
-  async processInstall ({checkpoint, h}) {
-    DEBUG(3, 'ApiWriter:processInstall     ', new Date)
+  async processInstall ({checkpoint, h, options}) {
+    debug('processInstall     ', new Date)
     // items whatever has isApi = true
     const items = await h.updatedList({
       isApi: true
@@ -33,11 +33,13 @@ class ApiWriter {
     }
     await Promise.all(plist).catch(ERROR)
 
-    await this._write_siteinfo(h).catch(ERROR)
-    DEBUG(3, 'ApiWriter:processInstall:Done', new Date)
+    await this._write_siteinfo(h, options).catch(ERROR)
+    debug('processInstall:Done', new Date)
   }
 
-  async _write_siteinfo (h) {
+  async _write_siteinfo (h, options) {
+    if (!options) options = {}
+
     const omitList = [
       'source_dir',
       'target_dir',
@@ -47,6 +49,13 @@ class ApiWriter {
       'path',
       'secrets'
     ]
+
+    if (options.dev) {
+      debug('Bulid siteinfo.json with dev mode')
+    } else {
+      debug('Build siteinfo.json')
+      omitList.push('build')
+    }
 
     const siteinfo = _.cloneDeep(_.omit(h.config.config, omitList))
     for (let collname in siteinfo.collections){

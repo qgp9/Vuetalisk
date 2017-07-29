@@ -9,13 +9,13 @@ program
   .parse(process.argv)
 
 const {debug, log, ERROR} = cmd.run()
-let vuetal = cmd.vuetal()
+let vuetalConf = cmd.vuetalConf()
 
 action()
   .catch(ERROR)
 
 async function action () {
-  const tal = vuetal.init()
+  const tal = vuetalConf.init()
 
   log('Remove dist', tal.helper.pathTarget())
   await fs.remove(tal.helper.pathTarget()).catch(ERROR)
@@ -28,7 +28,7 @@ async function action () {
 
 // not used yet
 async function cleanApi () {
-  const tal = vuetal.init()
+  const tal = vuetalConf.init()
   log('Remove api point')
   await fs.remove(tal.helper.pathApi()).catch(ERROR)
   log('Remove database')

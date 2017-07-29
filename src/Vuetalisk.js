@@ -4,6 +4,7 @@ const nodepath = require('path')
 let Helper
 
 function srcPath(...args) { return nodepath.resolve(__dirname, ...args) }
+function pluginPath(...args) { return nodepath.resolve(__dirname, '..', 'plugin', ...args) }
 function pkgPath(...args) { return nodepath.resolve(__dirname, '..', ...args) }
 
 class Vuetalisk {
@@ -71,7 +72,7 @@ class Vuetalisk {
    */
   useStore (store, ...args) {
     if (typeof store === 'string') {
-      const Store = require(srcPath(store))
+      const Store = require(pluginPath(store))
       this.store =  new Store(...args)
     } else {
       this.store = store
@@ -87,7 +88,7 @@ class Vuetalisk {
    */
   use (plugin, ...args) {
     if (typeof plugin === 'string') {
-      const Plugin = require(srcPath(plugin))
+      const Plugin = require(pluginPath(plugin))
       this.trains.register(new Plugin(...args))
     } else {
       this.trains.register(plugin)
@@ -173,7 +174,7 @@ class Vuetalisk {
 
   static require (module) {
     if (module === 'debug') return require(pkgPath(module))
-    return require(srcPath(module))
+    return require(pluginPath(module))
   }
 }
 

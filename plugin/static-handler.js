@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
-const Item = require('./item.js')
-const {ERROR, DEBUG, LOG} = require('./error.js')
+const Item = require('../src/item.js')
+const {ERROR, debug, log} = require('../debug')('static-handler')
 
 class StaticHandler {
   constructor () {
@@ -12,7 +12,7 @@ class StaticHandler {
   }
 
   async processInstall ({checkpoint, h}) {
-    DEBUG(3, 'StaticHandler::processInstall     ', new Date)
+    debug('processInstall     ', new Date)
     const files = await h.find({
       isStatic: true
     }).catch(ERROR)
@@ -27,8 +27,6 @@ class StaticHandler {
         plist.push(promise)
       }
       if (item.deleted) {
-        LOG(2, 'delete item ', item.path)
-        DEBUG(target)
         const promise = fs.remove(target)
           .then(() => h.remove(item))
           .catch(ERROR)
@@ -36,7 +34,7 @@ class StaticHandler {
       }
     }
     await Promise.all(plist).catch(ERROR)
-    DEBUG(3, 'StaticHandler::processInstall:Done', new Date)
+    debug('processInstall:Done', new Date)
   }
 }
 
