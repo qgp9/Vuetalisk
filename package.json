@@ -32,9 +32,9 @@
   },
   "files": [
     "*.js",
-    "src/vuetalisk",
-    "src/*.js",
-    "bin/*.js"
+    "src",
+    "bin",
+    "plugin"
   ],
   "dependencies": {
     "commander": "^2.11.0",
