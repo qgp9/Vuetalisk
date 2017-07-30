@@ -30,6 +30,7 @@ async function commander () {
  * Action 
  */
 async function action (program) {
+  const opts = {}
   if (program.force) opts.forceBuild = true
 
   program.api = true
@@ -42,8 +43,6 @@ async function action (program) {
   if (program.clean) {
     await require('./vuetalisk-clean').action()
   }
-
-  const opts = {}
 
   if (program.api) await buildApi(opts)
   if (program.page) await buildPage(opts)

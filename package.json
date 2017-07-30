@@ -46,7 +46,6 @@
     "lodash": "^4.17.4",
     "lokijs": "^1.5.0",
     "night-train": "^0.0.2",
-    "nuxt": "^1.0.0-rc3",
     "toml": "^2.3.2"
   },
   "devDependencies": {

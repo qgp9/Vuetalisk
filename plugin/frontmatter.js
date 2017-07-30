@@ -29,4 +29,4 @@ class FrontMatter {
 
 debug('front-matter loaded')
 module.exports = FrontMatter
-
+FrontMatter.install = () => new FrontMatter

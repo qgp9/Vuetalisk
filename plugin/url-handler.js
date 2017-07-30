@@ -64,3 +64,4 @@ class UrlHandler {
 }
 
 module.exports = UrlHandler
+UrlHandler.install = () => new UrlHandler

@@ -40,3 +40,4 @@ class StaticHandler {
 }
 
 module.exports = StaticHandler
+StaticHandler.install = () => new StaticHandler

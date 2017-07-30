@@ -61,3 +61,4 @@ class Cleaner {
 }
 
 module.exports = Cleaner
+Cleaner.install = () => new Cleaner

@@ -148,3 +148,4 @@ class FileLoader {
 }
 
 module.exports = FileLoader
+FileLoader.install = () => new FileLoader()

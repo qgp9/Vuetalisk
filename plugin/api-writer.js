@@ -74,3 +74,4 @@ class ApiWriter {
 }
 
 module.exports = ApiWriter
+ApiWriter.install = () => new ApiWriter

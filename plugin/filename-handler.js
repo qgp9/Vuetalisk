@@ -60,3 +60,4 @@ class FilenameHandler {
 
 
 module.exports = FilenameHandler
+FilenameHandler.install = () => new FilenameHandler

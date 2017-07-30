@@ -119,3 +119,4 @@ class Store {
 debug('Store loaded')
 
 module.exports = Store
+Store.install = dbFile => new Store(dbFile)

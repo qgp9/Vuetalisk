@@ -58,3 +58,4 @@ class DataHandler {
 }
 
 module.exports = DataHandler
+DataHandler.install = () => new DataHandler

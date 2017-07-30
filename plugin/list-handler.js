@@ -57,4 +57,5 @@ class ListHandler {
   }
 }
 module.exports = ListHandler
+ListHandler.install = () => new ListHandler
 debug('ListHandler loaded')
