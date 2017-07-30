@@ -162,13 +162,8 @@ class Helper {
    * @memberof PATH
    */
   pathItemApi (item) {
-    let url = item.url
-    if (url === '/') url += 'index'
-    return this.pathApi(
-      item.collection,
-      (item.isPage ? 'url' : ''),
-      url + '.json'
-    )
+    if (!item.api) return ''
+    return this.pathApi(item.collection, item.api)
   }
 
   /**

@@ -1,6 +1,6 @@
-const Vuetalisk = require('vuetalisk')
+const Vuetalisk = require('../')
 
-const _config = require('vuetalisk/config-loader').find()
+const _config = require('../config-loader').find()
 
 /**
  * Configuration function

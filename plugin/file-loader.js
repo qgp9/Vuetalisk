@@ -1,7 +1,7 @@
 const npath = require('path')
 const fs = require('fs-extra')
 const Item = require('../src/item.js')
-const {debug, log, ERROR} = require('../debug')('file-loader')
+const {debug, log, error, ERROR} = require('../debug')('file-loader')
 
 class FileLoader {
   constructor () {
@@ -45,6 +45,7 @@ class FileLoader {
    * @private
    */
   async processItem ({item, h}) {
+    if (item.type != 'page') return
     const data = fs.readFileSync(h.pathItemSrc(item), 'utf8')
     if (data) item.data = data 
   }
@@ -53,7 +54,19 @@ class FileLoader {
    * @private
    */
   async _processCollectionIter (collname, path, h) {
-    const files = fs.readdirSync(path)
+    let files
+    try {
+      files = fs.readdirSync(path)
+    } catch (e) {
+      if (e.code === 'ENOENT' ) {
+        log(`******* Directory doesn't exists.`, e.path)
+        debug(`******* Directory doesn't exists.`, e.path)
+        error(`******* Directory doesn't exists.`, e.path)
+        return
+      } else {
+        ERROR(e)
+      }
+    }
     for (const filename of files) {
       // Skip special
       if (filename[0] === '_') continue
@@ -83,7 +96,7 @@ class FileLoader {
         let item = await h.get(src).catch(ERROR)
         if (item) {
           item.lastChecked = h.checkpoint
-          // Is updated ?
+          item.installed= false
           if (item.updatedAt < stat.mtimeMs) {
             item.updatedAt = h.date(stat.mtimeMs)
             item.updated = true
@@ -102,7 +115,8 @@ class FileLoader {
             lastChecked: h.checkpoint,
             updatedAt: h.date(stat.mtimeMs),
             updated: true,
-            deleted: false
+            deleted: false,
+            installed: false
           }
           switch (type) {
             case 'page':
@@ -112,13 +126,13 @@ class FileLoader {
               item.isStatic = false
               break;
             case 'data':
-              item.url = npath.join('/', basePath)
+              item.url = '_temp_' + src
               item.isApi = true
               item.isPage = false
               item.isStatic = false
               break;
             case 'file':
-              item.url = npath.join('/', basePath)
+              item.url = '/' + basePath
               item.isApi = false
               item.isPage = false
               item.isStatic = true

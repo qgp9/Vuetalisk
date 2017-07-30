@@ -1,5 +1,6 @@
 const configDefault = {
-  source_dir: 'src',
+  this_is_default: true,
+  source_dir: 'site',
   target_dir: 'dist',
   api_point: 'api',
   basename: '/',
@@ -22,16 +23,13 @@ const configDefault = {
       permalink: '/:path',
       list: '/pages/list',
       sort: ['dir', 'order'],
-      pagenation: 20,
-      archive: false
     },
-    posts: {
-      type: 'page',
-      path: '_posts',
-      list: '/posts/list',
-      sort: ['date'],
-      pagenation: 20,
-      archive: '/archive'
+    data: {
+      type: 'data',
+      path: '_data',
+      permalink: '/:path',
+      list: '/data/list',
+      extensions: ['.js', '.json', '.yml', '.yaml', '.tml', '.toml'],
     },
     static: {
       type: 'file',

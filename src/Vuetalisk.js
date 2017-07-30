@@ -35,7 +35,7 @@ class Vuetalisk {
     if (typeof config === 'object') {
       this.config.addObj(config)
     } else {
-      this.config.addFile(nodepath.join(this.root, path))
+      this.config.addFile(nodepath.join(this.root, config))
     }
     this.config._normalize()
     // @important this.helper is only for command. don't use this in plugin
@@ -61,7 +61,7 @@ class Vuetalisk {
    * @param {string} path
    */
   setRoot (path) {
-    this.root = path
+    this.root = nodepath.resolve(path)
     return this
   }
 
@@ -101,8 +101,8 @@ class Vuetalisk {
    * @private
    */ 
   async _processItems (h) {
-    const type = 'page'
-    const items = await h.updatedList({type}).catch(ERROR)
+    // const type = 'page'
+    const items = await h.updatedList().catch(ERROR)
     const plist = []
     for (const item of items) {
       const promise = this.trains.run('processItem', {h, item})

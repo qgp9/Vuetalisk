@@ -10,6 +10,7 @@ class Config {
   }
 
   addFile (_path) {
+    debug('config added', _path)
     const ext = path.extname(_path)
     if (ext === '.js') {
       this._merge(require(_path))
@@ -89,6 +90,30 @@ class Config {
 
   _normalize () {
     const collections = this.config.collections
+    for (const name in collections){
+      const collection = collections[name]
+      // delete collection if it's false
+      if (!collection) delete collections[name]
+      else {
+        // type check
+        const type = collection.type
+        if (!type) {
+          ERROR(`"type" is missed in collection ${name}`)
+        }
+        if (!collection.type.match(/^(page|file|data)$/)){
+          ERROR(`Type "${type}" is not allowed in collection "${name}"`)
+        }
+        // check path
+        const path = collection.path
+        if (!path) {
+          ERROR(`"path" is missed in collection "${name}"`)
+        }
+        // set name for array iteration
+        if (!collection.name) collection.name = name
+      }
+    }
+
+    // Convert several arrays to object map for easy access
     for (const field of ['excludes', 'extensions', 'includes']){
       if (this.config[field]) {
         this.config[field] = this._arrayToMap(this.config[field])

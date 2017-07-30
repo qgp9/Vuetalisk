@@ -11,9 +11,9 @@ class FilenameHandler {
   }
 
   async processItem ({item, h}) {
-    if (item.type !== 'page') return
-    const collection = item.collection
+    if (item.type === 'list') return
 
+    const collection = item.collection
     let name = path.basename(item.path)
     let cleanPath = item.path
     // remove '/index'

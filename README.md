@@ -1,4 +1,4 @@
-# [WIp] Vuetalisk
+# [WIP] Vuetalisk
 
 Vuetalisk is a Static Site Generator based on `Static API` for  Vue.
 

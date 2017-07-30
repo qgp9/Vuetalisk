@@ -10,10 +10,6 @@ async function watcher(options) {
   const root = options.root || vuetalConf.root
   const sitedir = path.join(root, vuetalConf.config.get('','source_dir'))
 
-  await buildApi(options)
-    .then(() => console.log('vuetal well done'))
-    .catch(err => { console.error(err) })
-
   const watcher = chokidar.watch(sitedir, {ignoreInitial: true})
     .on('all', _.debounce((event, path) => {
       console.log(event, path)

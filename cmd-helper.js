@@ -27,7 +27,7 @@ class Cmd {
 
   vuetalConf (root, confPath) {
     if (!root) root = process.cwd()
-    if (!confPath) confPath = 'vuetalisk.config.js'
+    if (!confPath) return require('./config-loader').loadVuetalConfig(root)
     return require(path.join(root, confPath))
   }
 

@@ -1,5 +1,6 @@
 const {log, debug, ERROR} = require('../debug')('ListHandler')
 const _ = require('lodash')
+const path = require('path')
 
 class ListHandler {
   constructor () {
@@ -12,8 +13,8 @@ class ListHandler {
   async processInstall ({checkpoint, h}) {
     log('generate lists for collections')
     for (const collection in h.collections) {
-      const {list, pagenation, archive, archive_by} = 
-        h.confs(collection, ['list', 'pagenation', 'achive', 'archive_by'])
+      const {type, list, pagenation, archive, archive_by} = 
+        h.confs(collection, ['type', 'list', 'pagenation', 'achive', 'archive_by'])
       if (list) {
         const itemList = await h.properList({collection}) 
         // @note Save lists of collection with compact items
@@ -26,9 +27,13 @@ class ListHandler {
             'slug'
           ])))
         }
+        const api_point = '/' + h.conf(collection, 'api_point')
+        const api = path.join(api_point, (type === 'page' ? 'page' : ''), list + '.json')
+        debug(api)
         let item = {
           name: collection,
           url: list,
+          api: api,
           src: list,
           type: 'list',
           pagenation,
@@ -40,8 +45,9 @@ class ListHandler {
           updated: true,
           deleted: false,
           isApi: true,
-          isPage: true,
-          isStatic: false
+          isPage: type === 'page',
+          isStatic: false,
+          installed: false
         }
         await h.set(item).catch(ERROR)
       }

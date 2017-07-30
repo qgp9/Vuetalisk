@@ -1,4 +1,5 @@
 const {debug, ERROR} = require('../debug')('url-handler')
+const {join} = require('path')
 
 class UrlHandler {
   constructor () {
@@ -9,11 +10,10 @@ class UrlHandler {
 
   async processItem ({item, h}) {
     // Only for page type
-    if (item.type !== 'page') return
-
+    if (item.type === 'list') return
     let permalink = item.permalink
+    const collname = item.collection
     if (!permalink) {
-      const collname = item.collection
       const template = h.config.get(collname, 'permalink')
       const date = new Date(item.date)
       let year = ''
@@ -25,14 +25,17 @@ class UrlHandler {
         day += ('0' + date.getDate()).slice(-2)
       }
       const paths = item.path.split('/')
+      let cleanPath = item.cleanPath
+      if (item.type === 'page' || item.type === 'data') 
+        cleanPath = cleanPath.replace(/\..+?$/, '')
       permalink = template
         .replace(':collection', collname)
         .replace(':slug', item.slug || '')
         .replace(':title', item.slug || '')
-        .replace(':path', item.cleanPath.replace(/\..+$/,'')) // filename-handler
-        .replace(':year', year)
-        .replace(':month', month)
-        .replace(':day', day)
+        .replace(':path', cleanPath) // filename-handler
+        .replace(':year', year || '')
+        .replace(':month', month || '')
+        .replace(':day', day || '')
         .replace(':dir1', paths[0] || '')
         .replace(':dir2', paths[1] || '')
         .replace(':dir3', paths[2] || '')
@@ -42,6 +45,21 @@ class UrlHandler {
     let url = '/' + permalink 
     url = url.replace(/\/+/g, '/')
     item.url = url
+
+    const api_point = '/' + h.conf(collname, 'api_point')
+    // Use api url for data
+    switch (item.type) {
+      case 'page':
+        if (url === '/') url += 'index'
+        item.api = join(api_point, 'page', url + '.json')
+        break
+      case 'data':
+        item.api = join(api_point, collname, url + '.json')
+        item.url = join('/', collname, url)
+        break
+      default:
+        item.url = url
+    }
   }
 }
 

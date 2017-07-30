@@ -14,7 +14,8 @@ class StaticHandler {
   async processInstall ({checkpoint, h}) {
     debug('processInstall     ', new Date)
     const files = await h.find({
-      isStatic: true
+      isStatic: true,
+      installed: false
     }).catch(ERROR)
     const plist = []
     for (const item of files) {

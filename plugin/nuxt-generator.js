@@ -78,7 +78,7 @@ class NuxtGenerator {
     const plist = []
     for (const item of pages) {
       const url = item.url
-      const outpath = path.join(target, item.url, 'index.html')
+      const outpath = path.join(target, url, 'index.html')
       let doRender = true
       if(!isChanged) {
         const updatedAt = item.updatedAt

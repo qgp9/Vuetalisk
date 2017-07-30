@@ -18,15 +18,18 @@ class ApiWriter {
     debug('processInstall     ', new Date)
     // items whatever has isApi = true
     const items = await h.updatedList({
-      isApi: true
+      isApi: true,
+      installed: false,
     }).catch(ERROR)
 
-    const list = await  h.find({type:'list'})
+    // const list = await  h.find({type:'list'})
 
     let plist = []
     for (const item of items) {
+      if (item.src.match(/menu/)) debug(item)
+      if (!item.api) continue
       const promise = fs.outputJson(
-        h.pathItemApi(item),
+        h.pathTarget(item.collection, item.api),
         h.item.genOutput(item)
       ).catch(ERROR)
       plist.push(promise)
@@ -62,6 +65,7 @@ class ApiWriter {
       siteinfo.collections[collname] = _.omit(siteinfo.collections[collname], omitList)
     }
     await fs.outputJson(path.join(h.pathApi(),'site.json'), siteinfo).catch(ERROR)
+    await fs.outputJson(path.join(h.root,'.site.json'), siteinfo).catch(ERROR)
 
     const siteinfoJs = _.cloneDeep(h.config.config)
     siteinfoJs.root = h.root

@@ -9,7 +9,8 @@ const cwd = process.cwd()
 const mwd = __dirname
 
 debug('Load vuetal')
-const vuetalConf = require(path.join(cwd, 'vuetalisk.config.js'))
+const vuetalConf = require('../config-loader').loadVuetalConfig()
+
 debug('Load config')
 const helper = vuetalConf.init().helper
 const customCommands = helper.conf('', 'build.commands') || {}

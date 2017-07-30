@@ -38,3 +38,5 @@ async function cleanApi () {
 async function cleanPage () {
   // TODO
 }
+
+module.exports = {action}
