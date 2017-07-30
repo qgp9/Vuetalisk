@@ -38,6 +38,7 @@
     "defaults"
   ],
   "dependencies": {
+    "chokidar": "^1.7.0",
     "commander": "^2.11.0",
     "debug": "^2.6.8",
     "express": "^4.15.3",
@@ -47,6 +48,7 @@
     "lodash": "^4.17.4",
     "lokijs": "^1.5.0",
     "night-train": "^0.0.2",
+    "serve-static": "^1.12.3",
     "toml": "^2.3.2"
   },
   "devDependencies": {
