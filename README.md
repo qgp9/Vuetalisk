@@ -16,7 +16,7 @@ then Vue can fetch and `vuetify` them.
 
 # Install
 
-We have vuetalist-nuxt starter temlpate! Let's go with this.
+We have [vuetalist-nuxt starter temlpate](https://github.com/qgp9/vuetalisk-nuxt)! Let's go with this.
 
 ```
 vue init qgp9/vuetalisk-nuxt my-project
