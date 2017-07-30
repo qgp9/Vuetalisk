@@ -1,7 +1,7 @@
 {
   "name": "vuetalisk",
   "description": "Static Site Generator for Vue",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./index.js",
   "scripts": {
     "build": "node config/build.js",
@@ -34,7 +34,8 @@
     "*.js",
     "src",
     "bin",
-    "plugin"
+    "plugin",
+    "defaults"
   ],
   "dependencies": {
     "commander": "^2.11.0",
