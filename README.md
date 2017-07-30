@@ -5,7 +5,7 @@ Vuetalisk is a Static Site Generator based on `Static API` for  Vue.
 A basic idea is that Vuetalisk just writes a static JSON API from jekyll/hexo like markdown pages,
 then Vue can fetch and `vuetify` them.
 
-![vuetalisk](http://i.imgur.com/3QUaAyo.png)
+<p align="center"> <img src="http://i.imgur.com/3QUaAyo.png"> </p>
 
 # Install
 
