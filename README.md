@@ -1,8 +1,8 @@
-# [WIP] Vuetalisk
+# Vuetalisk
 
 Vuetalisk is a Static Site Generator based on `Static API` for  Vue with Jekyll like structure and markdown posts.
 
-*IMORTANT This is still uneder development*
+**IMORTANT This is still very early version**
 
 Live DEMO : https://vuetal-nuxt-demo.netlify.com/
 
@@ -16,7 +16,7 @@ then Vue can fetch and `vuetify` them.
 
 # Install
 
-Since Vutalisk proive a set of commands, let's install it globally
+We have vuetalist-nuxt starter temlpate! Let's go with this.
 
 ```
 vue init qgp9/vuetalisk-nuxt my-project
