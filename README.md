@@ -1,6 +1,8 @@
-# Vuetalisk
+# [WIp] Vuetalisk
 
 Vuetalisk is a Static Site Generator based on `Static API` for  Vue.
+
+*IMORTANT This is still uneder development*
 
 <p align="center"> <img src="http://i.imgur.com/3QUaAyo.png"> </p>
 
