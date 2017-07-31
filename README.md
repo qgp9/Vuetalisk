@@ -11,6 +11,13 @@ Live DEMO : https://vuetal-nuxt-demo.netlify.com/
 A basic idea is that Vuetalisk just writes a static JSON API from jekyll/hexo like markdown pages,
 then Vue can fetch and `vuetify` them.
 
+# Features
+* Cusomisable plugin based archtecture with `night-train`. 
+* Static API first. Any application which support ajax can be used as a frontend besides Vue
+* Helper for Nuxt/SSR for SEO.
+* [WIP] Helper for Vue/SPA both of history/hash routing
+* Jekyll/Hexo like directory structure and markdown page/posts 
+
 ![basic idea](http://i.imgur.com/VxE4bG4.png)
 
 
