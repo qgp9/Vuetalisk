@@ -1,5 +1,7 @@
 # Vuetalisk
 [![Gitter chat](https://badges.gitter.im/qgp9/vuetalisk.png)](https://gitter.im/vuetalisk/Lobby)
+[![npm version](https://badge.fury.io/js/vuetalisk.svg)](https://badge.fury.io/js/vuetalisk)
+
 Vuetalisk is a Static Site Generator based on `Static API` for  Vue with Jekyll like structure and markdown posts.
 
 **IMORTANT This is still very early version**
