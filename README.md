@@ -12,7 +12,7 @@ A basic idea is that Vuetalisk just writes a static JSON API from jekyll/hexo li
 then Vue can fetch and `vuetify` them.
 
 # Features
-* Cusomisable plugin based archtecture with `night-train`. 
+* Cusomisable plugin based archtecture inspired by `MetalSmith`.
 * Static API first. Any application which support ajax can be used as a frontend besides Vue
 * Helper for Nuxt/SSR for SEO.
 * [WIP] Helper for Vue/SPA both of history/hash routing
