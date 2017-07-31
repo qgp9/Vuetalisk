@@ -24,15 +24,15 @@ cd my-project
 npm install # or yarn install
 ```
 
-Since Vuetalisk provides build command, good to install it globally
+Since Vuetalisk provides build command, good to install it globally or just `npx`
 ```
 npm install -g vuetalisk
 vuetalisk -h
+vuetalisk build --all
+# or by npx
 
-# or locally
-
-chmod +x ./bin/vuetalisk
-./bin/vuetalisk -h
+npx vuetalisk -h
+npx vuetalisk build -all
 ```
 
 # Set up
