@@ -1,5 +1,0 @@
-class Table {
-  constructor (name) {
-    
-  }
-}
