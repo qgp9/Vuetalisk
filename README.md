@@ -14,7 +14,7 @@ A basic idea is that Vuetalisk just writes a static JSON API from jekyll/hexo li
 then Vue can fetch and `vuetify` them.
 
 # Features
-* Cusomisable plugin based archtecture inspired by `MetalSmith`.
+* Customisable plugin based archtecture inspired by `MetalSmith`.
 * Static API first. Any application which support ajax can be used as a frontend besides Vue
 * Helper for Nuxt/SSR for SEO.
 * [WIP] Helper for Vue/SPA both of history/hash routing
@@ -22,7 +22,7 @@ then Vue can fetch and `vuetify` them.
 
 # Install
 
-We have [vuetalist-nuxt starter template](https://github.com/qgp9/vuetalisk-nuxt)! Let's go with this.
+We have [vuetalisk-nuxt starter template](https://github.com/qgp9/vuetalisk-nuxt)! Let's go with this.
 
 ```
 vue init qgp9/vuetalisk-nuxt my-project
