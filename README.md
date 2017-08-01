@@ -47,6 +47,6 @@ npx vuetalisk build --all
 # Basic Idea
 ![basic idea](http://i.imgur.com/VxE4bG4.png)
 
-# Strecture
+# Structure
 ![strecture](http://i.imgur.com/AwG5x1W.png)
 
