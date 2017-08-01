@@ -42,7 +42,7 @@ vuetalisk build --all
 # or by npx
 
 npx vuetalisk -h
-npx vuetalisk build -all
+npx vuetalisk build --all
 ```
 
 # Set up
