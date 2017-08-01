@@ -20,9 +20,6 @@ then Vue can fetch and `vuetify` them.
 * [WIP] Helper for Vue/SPA both of history/hash routing
 * Jekyll/Hexo like directory structure and markdown page/posts 
 
-![basic idea](http://i.imgur.com/VxE4bG4.png)
-
-
 # Install
 
 We have [vuetalist-nuxt starter temlpate](https://github.com/qgp9/vuetalisk-nuxt)! Let's go with this.
