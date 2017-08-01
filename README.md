@@ -35,6 +35,7 @@ Since Vuetalisk provides build command, good to install it globally or just `npx
 npm install -g vuetalisk
 vuetalisk -h
 vuetalisk build --all
+
 # or by npx
 
 npx vuetalisk -h
