@@ -134,10 +134,4 @@ class Config {
 
 debug('config loaded')
 
-/* test
-const config = new Config
-config.addFile('./config-default.js')
-config.addFile('./_config.yml')
-*/
-
 module.exports = Config

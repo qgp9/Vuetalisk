@@ -36,10 +36,10 @@ async function action (opts) {
 
   debug('web-server')
   const helper = vuetalConf.init().helper
-  require('../src/server')(helper.pathTarget()).listen()
+  require('../utils/server')(helper.pathTarget()).listen()
 
   debug('watcher')
-  require('../src/watcher.js')({dev: opts.dev})
+  require('../utils/watcher.js')({dev: opts.dev})
 
   if (opts.nuxt) {
     debug('nuxt dev')

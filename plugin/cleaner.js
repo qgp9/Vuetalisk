@@ -1,6 +1,8 @@
+const {debug, log, ERROR} = require('../debug')('cleaner')
+const removeEmptyDirectory = require('vuetalisk/utils/removeEmptyDirectory')
+
 const path = require('path')
 const fs = require('fs-extra')
-const {debug, log, ERROR} = require('../debug')('cleaner')
 
 /**
  * Managge deleted file in DB, Dist
@@ -34,29 +36,10 @@ class Cleaner {
     }
 
     // Clean empty directory
-    this.removeEmptyDirectory(h.pathTarget())
+    removeEmptyDirectory(h.pathTarget())
       .catch(ERROR)
     
     debug('processInstall:Done', new Date())
-  }
-
-  async removeEmptyDirectory(dir, depth) {
-    const files = fs.readdirSync(dir)
-    let nfiles = 0
-    for (const file of files) {
-      nfiles++
-      const fullpath =  path.join(dir, file)
-      const stat = fs.statSync(fullpath)
-      if(!stat.isDirectory()) continue
-      const empty = await this.removeEmptyDirectory(fullpath)
-        .catch(ERROR)
-      if (empty) {
-        fs.rmdirSync(fullpath)
-        nfiles--
-      }
-    }
-    if (nfiles > 0) return false
-    return true
   }
 }
 

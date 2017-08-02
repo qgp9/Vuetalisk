@@ -1,34 +1,40 @@
 #!/usr/bin/env node
 
-const {debug} = require('../debug')('cmd:main')
-debug('start')
-const path = require('path')
-const fs = require('fs')
-
-const cwd = process.cwd()
-const mwd = __dirname
-
-debug('Load vuetal')
-const vuetalConf = require('../config-loader').loadVuetalConfig()
-
-debug('Load config')
-const helper = vuetalConf.init().helper
-const customCommands = helper.conf('', 'build.commands') || {}
-const package = require(path.join(mwd, '..', 'package.json'))
-
 const commands = {
   clean: 'Clean API, assets, pages, database, vue/nuxt build',
   build: `Build site. Default is '-ap' means 'build all`,
   dev: 'Vuetalisk + Nuxt/Vue dev mode'
 }
 
-debug('Load commander')
-const commander = require('../src/commander')
+// Execute commander if it's not module mode
+if (!module.parent) commander()
 
-commander
-  .version(package.version)
-  .usage('<command> [options]')
-  .customCommands(commands, customCommands, 'vuetalisk', ['bin', 'build'], cwd)
-  .parse(process.argv)
+/**
+ * Main Commander
+ */
+function commander () {
+  const {debug} = require('../debug')('cmd:main')
+  debug('start')
 
-debug('done')
+  const {join} = require('path')
+  const cwd = process.cwd()
+
+  debug('Load vuetal')
+  const vuetalConf = require('../utils/config-loader').loadVuetalConfig()
+
+  debug('Load config')
+  const helper = vuetalConf.config().helper
+  const customCommands = helper.conf('', 'build.commands') || {}
+  debug('Load commander')
+  const commander = require('../src/commander')
+  const package = require(`${__dirname}/../package.json`)
+
+  commander
+    .version(package.version)
+    .usage('<command> [options]')
+    .customCommands(commands, customCommands, 'vuetalisk', ['bin', 'build'], '.')
+    .parse(process.argv)
+  debug('done')
+}
+
+module.exports = {commands}

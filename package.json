@@ -26,9 +26,7 @@
   },
   "homepage": "https://github.com/qgp9/Vuetalisk#readme",
   "bin": {
-    "vuetalisk": "bin/vuetalisk",
-    "vuetalisk-build.js": "bin/vuetalisk-build.js",
-    "vuetalisk-clean.js": "bin/vuetalisk-clean.js"
+    "vuetalisk": "bin/vuetalisk"
   },
   "files": [
     "*.js",

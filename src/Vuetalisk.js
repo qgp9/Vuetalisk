@@ -12,7 +12,7 @@ class Vuetalisk {
     const Config = require('./config')
     this.root = '.'
     this.config = new Config
-    this.config.addObj(require('./config-default.js'))
+    this.config.addObj(require('../defaults/_config.js'))
     this.trains = new (require('night-train'))([
       'processCollection',
       'processItem',

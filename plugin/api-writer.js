@@ -1,8 +1,6 @@
+const load = require('../loader')
+const {debug, log, ERROR} = load('debug')('api-writer')
 const path = require('path')
-const fs = require('fs-extra')
-const {debug, log, ERROR} = require('../debug.js')('api-writer')
-const Item = require('../src/item.js')
-const _ = require('lodash')
 
 
 class ApiWriter {
@@ -14,8 +12,12 @@ class ApiWriter {
   }
 
   // TODO write page, list, delete deleted
-  async processInstall ({checkpoint, h, options}) {
+  async processInstall ({checkpoint, h, options = {ApiWriter: {}}}) {
     debug('processInstall     ', new Date)
+    const fs = require('fs-extra')
+
+    const opts = options.ApiWriter
+
     // items whatever has isApi = true
     const items = await h.updatedList({
       isApi: true,
@@ -36,12 +38,11 @@ class ApiWriter {
     }
     await Promise.all(plist).catch(ERROR)
 
-    await this._write_siteinfo(h, options).catch(ERROR)
+    await this.write_siteinfo(h, opts).catch(ERROR)
     debug('processInstall:Done', new Date)
   }
 
-  async _write_siteinfo (h, options) {
-    if (!options) options = {}
+  async write_siteinfo (h, options) {
 
     const omitList = [
       'source_dir',
@@ -60,16 +61,13 @@ class ApiWriter {
       omitList.push('build')
     }
 
-    const siteinfo = _.cloneDeep(_.omit(h.config.config, omitList))
-    for (let collname in siteinfo.collections){
-      siteinfo.collections[collname] = _.omit(siteinfo.collections[collname], omitList)
+    const configWriter = require('../utils/config-writer')
+    const siteinfo = await configWriter.hidden(h.root, h.config.config, omitList)
+      .catch(ERROR)
+    if (!options.skipWriteHidden) {
+      configWriter(siteinfo, h.pathApi('','site.json'))
+        .catch(ERROR)
     }
-    await fs.outputJson(path.join(h.pathApi(),'site.json'), siteinfo).catch(ERROR)
-    await fs.outputJson(path.join(h.root,'.site.json'), siteinfo).catch(ERROR)
-
-    const siteinfoJs = _.cloneDeep(h.config.config)
-    siteinfoJs.root = h.root
-    await fs.outputFile(path.join(h.root, '.config.js'), 'module.exports = ' + JSON.stringify(siteinfoJs, null, 2))
   }
 }
 

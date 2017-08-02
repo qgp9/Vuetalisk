@@ -1,5 +1,5 @@
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 
 class ConfigLoader {
   constructor (options) {
@@ -13,13 +13,11 @@ class ConfigLoader {
       '_config.toml',
       '_config.tml'
     ]
-
-    if (options.ignoreVuetalConf) this.findOrder.shift()
-
+    if (options.ignoreVuetalConf) this.findOrder.slice(1)
   }
 
   setRoot (root) {
-    this.root = root || '.'
+    this.root = root || path.resolve()
   }
 
   findConfig () {
@@ -37,11 +35,16 @@ class ConfigLoader {
   }
 
   loadVuetalConfig () {
-    const confPath = path.join(this.root, 'vuetalisk.config.js')
+    let confPath = path.join(this.root, 'vuetalisk.config.js')
     if (fs.existsSync(confPath)){
       return require(confPath)
     }
-    return require('./defaults/vuetalisk.config.js')
+    confPath = path.join(this.root, '.vuetalisk', 'vuetalisk.config.js')
+    console.log(confPath)
+    if (!fs.existsSync(confPath)){
+      fs.copySync(path.join(__dirname, '..', 'defaults', 'vuetalisk.config.js'), confPath)
+    }
+    return require(confPath)
   }
 }
 
