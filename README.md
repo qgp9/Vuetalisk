@@ -6,6 +6,8 @@ Vuetalisk is a Static Site Generator based on `Static API` for  Vue with Jekyll 
 
 **IMPORTANT This is still very early version**
 
+<p align="center"><img src="http://i.imgur.com/3QUaAyo.png"></p>
+
 * Live DEMO : https://vuetal-nuxt-demo.netlify.com/
 * Documents : https://github.com/qgp9/Vuetalisk/wiki
 * Getting Started : https://github.com/qgp9/Vuetalisk/wiki/Guide-Getting-Started
